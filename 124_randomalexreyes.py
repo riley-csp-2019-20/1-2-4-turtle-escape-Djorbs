@@ -4,40 +4,56 @@ shape = "arrow"
 maze_drawer = trtl.Turtle(shape = shape)
 maze_drawer.speed(0)
 maze_drawer.ht()
+maze_drawer.pensize(5)
 
+num_walls = 40
+barrier_size = 30
+
+wall_size = 10
+wall_spacing = 15
+door_width = 20
+
+maze_drawer.backward(wall_size/2)
 count = 0
-num_walls = 25
-wall_spacing = 25
-def random_barrier():
-    rbarrier = random.randint(1,10)
-def random_location():
-    global total_wall
-    rlocation = random.randit(1,total_wall)
+barrier_skip = 0
+def drawbarrier():
+    global barrier_skip
+    barrier_or_not = random.randint(1,2)
+    if barrier_or_not <= 1:
+        maze_drawer.right(90)
+        maze_drawer.forward(barrier_size)
+        maze_drawer.backward(barrier_size)
+        maze_drawer.left(90)
+    else:
+        barrier_skip += 1
 
-def barrier():
-    random_barrier()
-    global rbarrier
-    global rlocation
-    if rbarrier <= 3:
-        if count > 3:
-            random_location()
-            maze_drawer.backward(rlocation)
-
-
+def drawdoor():
+    maze_drawer.penup()
+    maze_drawer.forward(door_width)
+    maze_drawer.pendown()
 
 while count < num_walls:
-    maze_drawer.left(90)
-    wall_size = (25 + (count * wall_spacing))
-    solid_wall = wall_size/2
-    gap_wall = wall_spacing + 5
-    maze_drawer.forward(solid_wall)
-    maze_drawer.penup()
-    maze_drawer.forward(gap_wall)
-    maze_drawer.pendown()
-    maze_drawer.forward(solid_wall)
-    total_wall = solid_wall*2 + gap_wall
-    barrier()
-    count += 1
+    if count > 3:
+
+        door_loc = random.randint(door_width, wall_size-door_width*2)
+        barrier_loc = random.randint(wall_spacing*2, wall_size-door_width*2)
+
+        if door_loc < barrier_loc:
+            maze_drawer.forward(door_loc)
+            drawdoor()
+            maze_drawer.forward(barrier_loc - door_loc - door_width)
+            drawbarrier()
+            maze_drawer.forward(wall_size - barrier_loc)
+        else:
+            maze_drawer.forward(barrier_loc)
+            drawbarrier()
+            maze_drawer.forward(door_loc - barrier_loc)
+            drawdoor()
+            maze_drawer.forward(wall_size - door_loc - door_width)
+        maze_drawer.left(90)
+    wall_size += wall_spacing
+    count +=1
+
 
 wn = trtl.Screen()
 wn.mainloop()
